@@ -1,0 +1,108 @@
+#势函数关于距离求导得到，向量方向的加速度
+#两个浮标之间的势函数求导
+def V_V(X):
+    a,b,d0,d1,aa1=4,5,3,5,1
+    if X>0 and X<=a:
+        v_a=-2*aa1*(X-d0*d0/X)
+    elif X>a and a<=d1:
+        C=π*(X-b)/(2*(a-b))
+        B=math.sin(C)
+        v_a=-2*aa1*math.pow(B,2)*(X-d0*d0/X)
+    elif X>d1:
+        v_a=0
+    return v_a   
+#浮标和虚拟领导者之间的势函数的求导
+def V_VL(X):
+    a,b,h0,h1,aa1=4,5,0,5,1
+    if X<=a:
+        v_b=aa1*X
+    elif X>a and a<=h1:
+        C=π*(h1-X)/(a-h1)
+        B=math.cos(C)
+        v_b=aa1*(0.5*X*(1-B))
+    elif X>h1:
+        v_b=0
+    return v_b 
+def Distance_xy(x1,y1,x2,y2):   
+    a=math.sqrt(math.pow(x2-x1,2)+math.pow(y2-y1,2))
+    return (a)
+def plot_picture(x1,y1,x2,y2,x3,y3,v,c):
+#    传入点不是要画的点，左边的点变了右边的点未变的连线[x1,y1虚拟领导者、、、x2y2x3y3是浮标的左右两个位置]
+    temp_a=[]
+    xx2=calculate(x1,y1,x2,y2,x3,y3,v)[0]
+    yy2=calculate(x1,y1,x2,y2,x3,y3,v)[1]
+    xx3=calculate(x1,y1,x2,y2,x3,y3,v)[2]
+    yy3=calculate(x1,y1,x2,y2,x3,y3,v)[3]
+    
+    x11=[xx2,x1,xx3]
+    y11=[yy2,y1,yy3]
+    
+    plt.plot(x11,y11,c)
+    
+    temp_a.append(xx2)
+    temp_a.append(yy2)
+    temp_a.append(xx3)
+    temp_a.append(yy3)
+    return temp_a
+#计算每个浮标受其他浮标的力的计算
+#    其中x,y是虚拟领导者的位置，，x0,y0,x1,y1是左右两个浮标的位置
+def calculate(x,y,x1,y1,x2,y2,v):
+    temp=[]
+    for i in range(0,201):
+        X1=Distance_xy(x,y,x1,y1)
+        X2=Distance_xy(x,y,x2,y2)
+        
+        point1=V_V(X1)
+        point2=V_V(X2)
+        
+        x_v1=(x1-x)*point1/X1
+        y_v1=(y1-y)*point1/X1+v
+        x_v2=(x2-x)*point2/X2
+        y_v2=(y2-y)*point2/X2+v
+        
+        xx1=x1+x_v1*0.5
+        yy1=y1+y_v1*0.5
+        xx2=x2+x_v2*0.5
+        yy2=y2+y_v2*0.5
+        x1=xx1
+        y1=yy1
+        x2=xx2
+        y2=yy2
+    temp.append(xx1)
+    temp.append(yy1)
+    temp.append(xx2)
+    temp.append(yy2)
+    return temp
+   
+if __name__ == '__main__':
+    fig = plt.figure(figsize=(8,8))
+    ax1=fig.add_axes([0.1,0.1,0.8,0.8])
+    plt.xlim(-5,12)
+    plt.ylim(-5,12)
+    plt.grid(True)
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('A simple plot')
+    t_a=[] 
+    t_b=[]
+    t_c=[]
+    t_d=[]
+    t_e=[]
+    
+    x=[1,4,7]
+    y=[1,1,1]
+    plt.plot(x,y,'ro-')
+    v=0.01
+#    一次运动100s
+    t_a=plot_picture(4,2,x[0],y[0],x[2],y[2],v,c='bo-')
+    t_b=plot_picture(4,3,t_a[0],t_a[1],t_a[2],t_a[3],v,c='ko-')
+    t_c=plot_picture(4,4,t_b[0],t_b[1],t_b[2],t_b[3],v,c='ro-')
+    t_d=plot_picture(4,5,t_c[0],t_c[1],t_c[2],t_c[3],v,c='mo-')
+    t_e=plot_picture(4,6,t_d[0],t_d[1],t_d[2],t_d[3],v,c='go-')
+    t_f=plot_picture(4,7,t_e[0],t_e[1],t_e[2],t_e[3],v,c='bo-')
+    t_g=plot_picture(4,8,t_f[0],t_f[1],t_f[2],t_f[3],v,c='ro-')
+    t_h=plot_picture(4,9,t_g[0],t_g[1],t_g[2],t_g[3],v,c='mo-')
+    t_i=plot_picture(4,10,t_h[0],t_h[1],t_h[2],t_h[3],v,c='go-')
+    a = np.array([1,2])
+    b = np.array([3,4])
+    ax1.arrow(0, 0, 0, 3, length_includes_head=True,head_width=0.25, head_length=0.5, ec='b')
